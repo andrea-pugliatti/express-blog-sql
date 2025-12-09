@@ -17,6 +17,7 @@ const index = (req, res) => {
 const show = (req, res) => {
 	const id = Number(req.params.id);
 	const query = `SELECT * FROM posts WHERE id = ?`;
+	const queryTags = `SELECT * FROM tags JOIN post_tag ON post_tag.tag_id = tags.id WHERE post_tag.post_id = ?`;
 
 	connection.query(query, [id], (err, response) => {
 		if (err) return res.status(500).json({ error: err, message: err.message });
@@ -24,7 +25,16 @@ const show = (req, res) => {
 		if (response.length === 0)
 			return res.status(404).json({ error: 404, message: "Post Not Found" });
 
-		res.json(response[0]);
+		connection.query(queryTags, [id], (errTags, resTags) => {
+			if (errTags)
+				return res
+					.status(500)
+					.json({ error: errTags, message: errTags.message });
+
+			res.json({ ...response[0], tags: resTags });
+		});
+
+		// res.json(response[0]);
 	});
 };
 
