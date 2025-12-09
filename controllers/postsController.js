@@ -2,24 +2,16 @@ const postsList = require("../data/posts");
 const connection = require("../data/db");
 
 const index = (req, res) => {
-	// res.send("Lista dei post");
-	// res.json(postsList);
+	const query = `SELECT * FROM posts`;
 
-	let filteredList = postsList;
+	connection.query(query, (err, response) => {
+		if (err)
+			return res
+				.status(500)
+				.json({ error: err, message: "Database query failed" });
 
-	if (req.query.tag) {
-		filteredList = postsList.filter((post) =>
-			post.tags
-				.map((t) => t.toLowerCase())
-				.includes(req.query.tag.toLowerCase()),
-		);
-	}
-
-	// if (req.query.id) {
-	// 	filteredList = postsList.filter((post) => post.id === Number(req.query.id));
-	// }
-
-	res.json(filteredList);
+		res.json(response);
+	});
 };
 
 const show = (req, res) => {
