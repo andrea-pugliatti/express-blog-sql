@@ -72,17 +72,14 @@ const modify = (req, res) => {
 };
 
 const destroy = (req, res) => {
-	// res.send(`Elimina il post ${req.params.id}`);
-	const found = postsList.find((post) => post.id === Number(req.params.id));
+	const id = Number(req.params.id);
+	const query = `DELETE FROM posts WHERE id = ?`;
 
-	if (!found) {
-		res.status(404).json({ error: true, message: "Not Found!" });
-	}
+	connection.query(query, [id], (err) => {
+		if (err) return res.status(500).json({ error: err, message: err.message });
 
-	postsList.splice(postsList.indexOf(found), 1);
-
-	console.log(postsList);
-	res.sendStatus(204);
+		res.sendStatus(204);
+	});
 };
 
 module.exports = { index, show, store, update, modify, destroy };
