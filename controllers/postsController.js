@@ -1,4 +1,5 @@
 const postsList = require("../data/posts");
+const connection = require("../data/db");
 
 const index = (req, res) => {
 	// res.send("Lista dei post");
